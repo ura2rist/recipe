@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+
+  db:
+    build: ./db
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: Faaw2745sD!
+      MYSQL_DATABASE: recipe
+      MYSQL_USER: recipe
+      MYSQL_PASSWORD: 9696GOR9696
+    volumes:
+      - ./save/db:/var/lib/mysql
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: [ "CMD", "mysqladmin" ,"ping", "-h", "localhost" ]
+      timeout: 45s
+      interval: 8s
+      retries: 8
+
+  php:
+    build: ./php
+    environment:
+      - APACHE_RUN_USER=www-data
+      - passw=9696GOR9696
+      - user=recipe
+      - nameDb=recipe
+      - db=db
+    ports:
+      - 3005:80
+    depends_on:
+      db:
+        condition: service_healthy
+    working_dir: /var/www/html/
+  #   networks:
+  #     - default
+    volumes:
+      - ./save/uploads:/var/www/html/uploads
+      - ./php:/var/www/html/
